@@ -1,5 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
+import QRCode from "react-qr-code";
+
 import {isValidAutomergeUrl, Repo, RepoConfig} from '@automerge/automerge-repo'
 import {BrowserWebSocketClientAdapter} from '@automerge/automerge-repo-network-websocket'
 import {IndexedDBStorageAdapter} from "@automerge/automerge-repo-storage-indexeddb"
@@ -33,6 +35,9 @@ const docUrl = document.location.hash = handle.url
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <RepoContext.Provider value={repo}>
+      <QRCode value={docUrl} />
+      <div style={{padding: "2em"}} />
+
       <Poll docUrl={docUrl} setup={model.defaultSetup()}
             myVotes={model.newMyVotes(setup)}/>
     </RepoContext.Provider>

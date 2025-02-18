@@ -2,6 +2,7 @@ import '@picocss/pico/css/pico.min.css'
 import {useDocument} from '@automerge/automerge-repo-react-hooks'
 import type {AutomergeUrl} from '@automerge/automerge-repo'
 
+import * as assert from './assert';
 import * as model from './model'
 
 import './Poll.css'
@@ -24,10 +25,13 @@ function Poll(props: {
   return (
     <>
       <div>
-        <button onClick={(evt) => {
+        <button onClick={() => {
           changeDoc(doc => {
             for (const question of props.setup.questions) {
               for (const grade of props.setup.grades) {
+                assert.isDefined(doc.votes[question]);
+                assert.isDefined(doc.votes[question][grade]);
+
                 const counter = doc.votes[question][grade];
 
                 // Be robust to subtle sub-zero racing conditions.
@@ -52,10 +56,10 @@ function Poll(props: {
             <Question
               doc={doc} changeDoc={changeDoc} setup={props.setup}
               question={question}
-              vote={props.myVotes.votes[question]}
+              vote={props.myVotes.votes[question]!}
               onVoteChange={
                 (grade) => {
-                  const prevGrade = props.myVotes.votes[question];
+                  const prevGrade = props.myVotes.votes[question]!;
 
                   if (grade == prevGrade) {
                     return;
@@ -63,11 +67,14 @@ function Poll(props: {
 
                   changeDoc(aDoc => {
                     if (prevGrade !== null) {
-                      aDoc.votes[question][prevGrade].decrement(1);
+                      aDoc.votes[question]![prevGrade]!.decrement(1);
                     }
 
                     props.myVotes.votes[question] = grade;
-                    aDoc.votes[question][grade].increment(1);
+
+                    if (grade !== null) {
+                      aDoc.votes[question]![grade]!.increment(1);
+                    }
                   })
                 }
               }

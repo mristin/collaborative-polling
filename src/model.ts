@@ -4,7 +4,7 @@ import * as an from '@automerge/automerge/next'
 // This typing trick to represent plain JavaScript objects as dictionaries
 // has been taken from:
 // https://gist.github.com/ianmstew/2b60f54fc605f81bf53a46d6b6bc9868
-type notUndefined = string | number | boolean | symbol | object;
+type notUndefined = string | number | boolean | symbol | object | null;
 
 export interface Dictionary<T extends notUndefined = notUndefined> {
   [key: string]: T | undefined;
@@ -57,10 +57,10 @@ export interface State {
 }
 
 export function newState(setup: Setup): State {
-  const votes = {}
+  const votes: Dictionary<Dictionary<an.Counter>> = {}
 
   for (const question of setup.questions) {
-    const grading = {}
+    const grading: Dictionary<an.Counter> = {}
 
     for (const grades of setup.grades) {
       grading[grades] = new an.Counter();
@@ -79,7 +79,8 @@ export class MyVotes {
 }
 
 export function newMyVotes(setup: Setup) {
-  const votes = {}
+  const votes: Dictionary<string|null> = {}
+
   for (const question of setup.questions) {
     votes[question] = null;
   }

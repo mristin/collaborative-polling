@@ -8,8 +8,8 @@ function Question(
     changeDoc: model.ChangeDoc;
     setup: model.Setup;
     question: string;
-    vote: string|null;
-    onVoteChange: (vote: string|null) => void
+    vote: string | null;
+    onVoteChange: (vote: string | null) => void
   }
 ) {
   const id = react.useId();
@@ -40,9 +40,19 @@ function Question(
       <div>
         {
           props.setup.grades.map(
-            (grade, index) => <div key={index}>
-              {grade}: {props.doc.votes[props.question][grade].value}
-            </div>
+            (grade, index) => {
+              let bar = [];
+              const count = props.doc.votes[props.question]![grade]!.value;
+              for (let i = 0; i < count; i++) {
+                bar.push("▮");
+              }
+
+              return (
+                <div key={index}>
+                  {grade}: {bar.join("")}
+                </div>
+              );
+            }
           )
         }
       </div>
