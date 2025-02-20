@@ -29,18 +29,15 @@ export class Setup {
 export function defaultSetup() {
   return new Setup(
     [
-      'Clarity / well-structured',
+      'Clarity / general structure',
       'Readability',
       'Conciseness',
+      'ADTs and/or UML class diagrams',
+      'UML state machine(s)',
+      'UML sequence diagram(s)',
+      'Pseudocode',
       'Demonstrated testability',
       'Demonstrated evolvability',
-      'Levels of abstraction: ADTs and/or UML class diagrams',
-      'Levels of abstraction: Pseudocode',
-      'Levels of abstraction: UML state machine(s)',
-      'Levels of abstraction: UML sequence diagram(s)',
-      'Completeness & correctness: Data structures',
-      'Completeness & correctness: Behavior and logic',
-      'Completeness & correctness: Quality of contracts and assertions',
     ],
     ['insufficient', 'barely ok', 'ok', 'good']
   )
