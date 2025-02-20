@@ -35,8 +35,8 @@ const docUrl = document.location.hash = handle.url
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <RepoContext.Provider value={repo}>
-      <QRCode value={docUrl} />
-      <div style={{padding: "2em"}} />
+      <QRCode value={document.location.toString()}/>
+      <div style={{padding: "2em"}}/>
 
       <Poll docUrl={docUrl} setup={model.defaultSetup()}
             myVotes={model.newMyVotes(setup)}/>
