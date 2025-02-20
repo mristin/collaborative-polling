@@ -20,7 +20,7 @@ function Poll(props: {
 
   return (
     <>
-      <div>
+      <div style={{ width: '100%', textAlign: 'right' }}>
         <button
           onClick={() => {
             props.changeDoc((doc) => {
