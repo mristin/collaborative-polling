@@ -32,7 +32,7 @@ function Question(props: {
       </div>
       <div>
         {props.setup.grades.map((grade, index) => {
-          let bar = []
+          const bar = []
           const count = props.doc.votes[props.question]![grade]!.value
           for (let i = 0; i < count; i++) {
             bar.push('▮')
