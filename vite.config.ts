@@ -1,20 +1,20 @@
 // vite.config.ts
-import {defineConfig} from "vite"
-import react from "@vitejs/plugin-react"
-import wasm from "vite-plugin-wasm"
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+import wasm from 'vite-plugin-wasm'
 
 export default defineConfig({
   // customize this to your repo name for github pages deploy
-  base: "/collaborative-polling/",
+  base: '/collaborative-polling/',
 
   build: {
-    target: "esnext",
+    target: 'esnext',
   },
 
   plugins: [wasm(), react()],
 
   worker: {
-    format: "es",
+    format: 'es',
     plugins: () => [wasm()],
   },
 })
