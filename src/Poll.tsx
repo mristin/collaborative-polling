@@ -1,7 +1,3 @@
-import '@picocss/pico/css/pico.min.css'
-import {useDocument} from '@automerge/automerge-repo-react-hooks'
-import type {AutomergeUrl} from '@automerge/automerge-repo'
-
 import * as assert from './assert';
 import * as model from './model'
 
@@ -10,23 +6,23 @@ import './Poll.css'
 import Question from "./Question";
 
 function Poll(props: {
-  docUrl: AutomergeUrl,
+  doc: model.Document,
+  changeDoc: model.ChangeDoc,
   setup: model.Setup,
-  myVotes: model.MyVotes
+  localState: model.LocalState
 }) {
-  const [doc, changeDoc] = useDocument<model.State>(props.docUrl);
-
-  if (doc === undefined) {
-    return <div>
-      The document for the {props.docUrl} could not be found.
-    </div>
+  if (props.doc.resetId.value !== props.localState.lastObservedResetId) {
+    for (const question of props.setup.questions) {
+      props.localState.votes[question] = null;
+    }
+    props.localState.lastObservedResetId = props.doc.resetId.value;
   }
 
   return (
     <>
       <div>
         <button onClick={() => {
-          changeDoc(doc => {
+          props.changeDoc(doc => {
             for (const question of props.setup.questions) {
               for (const grade of props.setup.grades) {
                 assert.isDefined(doc.votes[question]);
@@ -41,9 +37,9 @@ function Poll(props: {
                   counter.decrement(counter.value)
                 }
               }
-
-              props.myVotes.votes[question] = null;
             }
+
+            doc.resetId.increment(1);
           })
         }
         }>Reset
@@ -54,26 +50,26 @@ function Poll(props: {
         props.setup.questions.map(
           (question: string, index: number) =>
             <Question
-              doc={doc} changeDoc={changeDoc} setup={props.setup}
+              doc={props.doc} changeDoc={props.changeDoc} setup={props.setup}
               question={question}
-              vote={props.myVotes.votes[question]!}
+              vote={props.localState.votes[question]!}
               onVoteChange={
                 (grade) => {
-                  const prevGrade = props.myVotes.votes[question]!;
+                  const prevGrade = props.localState.votes[question]!;
 
                   if (grade == prevGrade) {
                     return;
                   }
 
-                  changeDoc(aDoc => {
+                  props.changeDoc(doc => {
                     if (prevGrade !== null) {
-                      aDoc.votes[question]![prevGrade]!.decrement(1);
+                      doc.votes[question]![prevGrade]!.decrement(1);
                     }
 
-                    props.myVotes.votes[question] = grade;
+                    props.localState.votes[question] = grade;
 
                     if (grade !== null) {
-                      aDoc.votes[question]![grade]!.increment(1);
+                      doc.votes[question]![grade]!.increment(1);
                     }
                   })
                 }

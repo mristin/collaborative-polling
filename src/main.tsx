@@ -7,9 +7,8 @@ import {BrowserWebSocketClientAdapter} from '@automerge/automerge-repo-network-w
 import {IndexedDBStorageAdapter} from "@automerge/automerge-repo-storage-indexeddb"
 import {RepoContext} from '@automerge/automerge-repo-react-hooks'
 
-import Poll from './Poll.tsx'
+import App from "./App";
 import * as model from './model'
-
 import './index.css'
 
 const repoConfig: RepoConfig = {
@@ -28,7 +27,7 @@ let handle
 if (isValidAutomergeUrl(rootDocUrl)) {
   handle = repo.find(rootDocUrl)
 } else {
-  handle = repo.create<model.State>(model.newState(setup))
+  handle = repo.create<model.SharedState>(model.newSharedState(setup))
 }
 const docUrl = document.location.hash = handle.url
 
@@ -38,8 +37,11 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
       <QRCode value={document.location.toString()}/>
       <div style={{padding: "2em"}}/>
 
-      <Poll docUrl={docUrl} setup={model.defaultSetup()}
-            myVotes={model.newMyVotes(setup)}/>
+      <App
+        docUrl={docUrl}
+        setup={model.defaultSetup()}
+        localState={model.newLocalState(setup)}
+      />
     </RepoContext.Provider>
   </React.StrictMode>,
 )

@@ -10,11 +10,11 @@ export interface Dictionary<T extends notUndefined = notUndefined> {
   [key: string]: T | undefined;
 }
 
-export type Document = an.Doc<State>;
+export type Document = an.Doc<SharedState>;
 
 export type ChangeDoc = (
-  changeFn: an.ChangeFn<State>,
-  options?: an.ChangeOptions<State> | undefined
+  changeFn: an.ChangeFn<SharedState>,
+  options?: an.ChangeOptions<SharedState> | undefined
 ) => void;
 
 export class Setup {
@@ -52,11 +52,12 @@ export function defaultSetup() {
 }
 
 
-export interface State {
+export interface SharedState {
   votes: Dictionary<Dictionary<an.Counter>>;
+  resetId: an.Counter;
 }
 
-export function newState(setup: Setup): State {
+export function newSharedState(setup: Setup): SharedState {
   const votes: Dictionary<Dictionary<an.Counter>> = {}
 
   for (const question of setup.questions) {
@@ -69,21 +70,24 @@ export function newState(setup: Setup): State {
     votes[question] = grading;
   }
 
-  return {votes: votes}
+  return {votes: votes, resetId: new an.Counter()}
 }
 
-export class MyVotes {
-  constructor(public votes: Dictionary<string | null>) {
+export class LocalState {
+  constructor(
+    public votes: Dictionary<string | null>,
+    public lastObservedResetId: number | null
+  ) {
     // Intentionally empty.
   }
 }
 
-export function newMyVotes(setup: Setup) {
+export function newLocalState(setup: Setup) {
   const votes: Dictionary<string|null> = {}
 
   for (const question of setup.questions) {
     votes[question] = null;
   }
 
-  return new MyVotes(votes)
+  return new LocalState(votes, null)
 }
